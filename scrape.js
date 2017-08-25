@@ -52,22 +52,26 @@ ${y}-${m}-${d}%20until%3A${y}-${m}-${d + 1}&src=typd`;
           await new Promise(resolve => setTimeout(resolve, ${SCROLL_DELAY}));
         } while (document.querySelectorAll("li.js-stream-item").length
             >= num_tweets);
-      })().then(resolve => JSON.stringify(document.documentElement.innerHTML));`
-        /*
+      })().then(resolve => JSON.stringify({
         ids: [...document.querySelectorAll("li.js-stream-item")]
             .map(id => id.getAttribute("data-item-id")).slice(1),
         tweets: [...document.querySelectorAll("p.js-tweet-text")]
             .map(tweet => tweet.textContent),
       }));`
-            */
     });
-    console.log(result.result.value);
-    /*
     const value = JSON.parse(result.result.value);
+    console.log(`...${value.ids.length} tweets found.`);
     for (let i = 0; i < value.ids.length; i++) {
-      tweets[value.ids[i]] = value.tweets[i];
+      if (value.tweets[i].includes("pic.twitter.com")) {
+        tweets[value.ids[i]] = value.tweets[i].slice(
+            0, value.tweets[i].lastIndexOf("pic.twitter.com"));
+      } else if (value.tweets[i].includes("…")) {
+        tweets[value.ids[i]] = value.tweets[i].slice(
+            0, value.tweets[i].lastIndexOf("http"));
+      } else {
+        tweets[value.ids[i]] = value.tweets[i];
+      }
     }
-    */
   });
 
   let year = start_year;
