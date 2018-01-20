@@ -1,6 +1,28 @@
 {
+  "name": "twitter-scroller",
+  "version": "1.0.0",
+  "description": "Scrape more tweets than allowed with the Twitter API, by literally scrolling down using the Chrome DevTools Protocol.",
+  "main": "index.js",
   "dependencies": {
-    "chrome-launcher": "^0.4.0",
-    "chrome-remote-interface": "^0.24.3"
-  }
+    "chrome-launcher": "^0.10.2",
+    "chrome-remote-interface": "^0.25.5"
+  },
+  "devDependencies": {},
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eyqs/twitter-scroller.git"
+  },
+  "keywords": [
+    "Twitter",
+    "Scroller",
+    "Scraper",
+    "Web Scraper"
+  ],
+  "author": "Eugene Y. Q. Shen <eugene@eyqs.ca> (https://eyqs.ca)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/eyqs/twitter-scroller/issues"
+  },
+  "homepage": "https://github.com/eyqs/twitter-scroller#readme"
 }
