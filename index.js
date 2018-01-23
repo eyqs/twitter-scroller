@@ -1,40 +1,28 @@
 // Translated from original Python/Selenium in
 // https://github.com/bpb27/twitter_scraping
 
-if (process.argv.length < 9) {
-  console.log(`Usage: nodejs crawl.js [username] \
-[start_year] [start_month] [start_day] [end_year] [end_month] [end_day]`);
-  process.exit();
-}
-
 const chromeLauncher = require("chrome-launcher");
 const CDP = require("chrome-remote-interface");
 const fs = require("fs");
+
 const MONTHS_PER_YEAR = 12;
 const DAYS_PER_MONTH = 31;
 const MAX_SCROLL_WAIT = 3000;
 const MAX_PAGE_WAIT = 10000;
 
-const user = process.argv[2];
-const start_year = parseInt(process.argv[3]);
-const start_month = parseInt(process.argv[4]);
-const start_day = parseInt(process.argv[5]);
-const end_year = parseInt(process.argv[6]);
-const end_month = parseInt(process.argv[7]);
-const end_day = parseInt(process.argv[8]);
-const tweets = {};
-
-async function crawlTweets(Page, y, m, d) {
+async function crawlTweets(Page, username, y, m, d) {
   const url =
-`https://twitter.com/search?f=tweets&q=from%3A${user}%20since%3A\
+`https://twitter.com/search?f=tweets&q=from%3A${username}%20since%3A\
 ${y}-${m}-${d}%20until%3A${y}-${m}-${d + 1}&src=typd`;
-  console.log(`Crawling @${user}'s tweets on ${y}-${m}-${d}...`);
+  console.log(`Crawling @${username}'s tweets on ${y}-${m}-${d}...`);
   await Page.navigate({url});
   await Page.loadEventFired();
   await new Promise(resolve => setTimeout(resolve, MAX_PAGE_WAIT));
 }
 
-(async () => {
+exports.main = async function(username, start_year, start_month, start_day,
+    end_year, end_month, end_day) {
+  const tweets = {};
   const chrome = await chromeLauncher.launch({
     chromeFlags: ["--disable-gpu", "--no-sandbox", "--headless"]
   });
@@ -94,7 +82,7 @@ ${y}-${m}-${d}%20until%3A${y}-${m}-${d + 1}&src=typd`;
   while (year < end_year) {
     while (month < MONTHS_PER_YEAR) {
       while (day < DAYS_PER_MONTH - 1) {
-        await crawlTweets(Page, year, month, day);
+        await crawlTweets(Page, username, year, month, day);
         ++day;
       }
       day = 1;
@@ -105,22 +93,22 @@ ${y}-${m}-${d}%20until%3A${y}-${m}-${d + 1}&src=typd`;
   }
   while (month < end_month) {
     while (day < DAYS_PER_MONTH - 1) {
-      await crawlTweets(Page, year, month, day);
+      await crawlTweets(Page, username, year, month, day);
       ++day;
     }
     day = 1;
     ++month;
   }
   while (day < end_day) {
-    await crawlTweets(Page, year, month, day);
+    await crawlTweets(Page, username, year, month, day);
     ++day;
   }
 
-  const file_name = `${user}--${start_year}-${start_month}-${start_day}--\
+  const file_name = `${username}--${start_year}-${start_month}-${start_day}--\
 ${end_year}-${end_month}-${end_day}--tweets.json`;
   console.log(`Total number of tweets saved in "${file_name}": \
 ${Object.keys(tweets).length}.`);
   fs.writeFile(file_name, JSON.stringify(tweets),
       error => { console.log(error); process.exit(); })
   chrome.kill();
-})();
+}
