@@ -1,6 +1,6 @@
 {
   "name": "twitter-scroller",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Scrape more tweets than allowed with the Twitter API, by literally scrolling down using the Chrome DevTools Protocol.",
   "main": "index.js",
   "bin": {
